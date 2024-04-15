@@ -13,8 +13,8 @@
 #define RS_DATA			PORTB|=(1<<1)  /*select DATA register*/
 #define RS_INSTRACTION	PORTB&=~(1<<1) /*select INSTRACTION register*/
 
-#define	ENABLE_HIGHT			PORTB|=(1<<2)	/* set 1 or 0 to E pin */
-#define ENABLE_LOW				PORTB&=~(1<<2)
+#define	ENABLE_HIGHT	PORTB|=(1<<2)	/* set 1 or 0 to E pin */
+#define ENABLE_LOW		PORTB&=~(1<<2)
 
 char customChar[8] = {
 	0b00100,
@@ -37,9 +37,6 @@ char heart[8] = {
 	0b00100
 };
 
-void displayInit(){
-	_delay_ms(15);
-}
 
 void portInit(){
 	/* pins 1,2 PORTB are for execute commands */
@@ -53,44 +50,68 @@ void portInit(){
 	  D6			   ->      PORTD3
 	  D7			   ->      PORTD4
 	  */
-	DDRD|=(1<<1)|(1<<2)|(1<<3)|(1<<4);
+	DDRD|=(1<<0)|(1<<1)|(1<<2)|(1<<3);
 }
 
 void sendData(char data){
+	PORTD=(data>>4);
 	RS_DATA;
-	_delay_us(15);
 	ENABLE_HIGHT;  /* rise voltage pulse */
-	_delay_us(15);
-	PORTB=data>>4;
+	_delay_us(50);
 	ENABLE_LOW;    /* data transits with falling voltage pulse */
-	_delay_us(15);
-	ENABLE_HIGHT;  /* rise voltage pulse */
-	_delay_us(15);
-	PORTB=data>>4;
-	_delay_us(15);
+
+	PORTD=data;
+	ENABLE_HIGHT;
+	_delay_us(50);
 	ENABLE_LOW;    /* data transits with falling voltage pulse */
-	_delay_us(15);
+	_delay_us(50);
 }
 
 void sendInstraction(char command){
+	PORTD=(command>>4);
 	RS_INSTRACTION;
-	_delay_us(15);
 	ENABLE_HIGHT;  /* rise voltage pulse */
-	_delay_us(15);
-	PORTB=command>>4;
+	_delay_us(50);
 	ENABLE_LOW;    /* data transits with falling voltage pulse */
-	_delay_us(15);
-	ENABLE_HIGHT;  /* rise voltage pulse */
-	_delay_us(15);
-	PORTB=command>>4;
-	_delay_us(15);
+	
+	PORTD=command;
+	ENABLE_HIGHT;
+	_delay_us(50);
 	ENABLE_LOW;    /* data transits with falling voltage pulse */
-	_delay_us(15);
+	_delay_us(50);
 }
+
+void displayInit(){
+	_delay_ms(15);
+	sendInstraction(0b0011);
+	_delay_ms(5);
+	sendInstraction(0b0011);
+	_delay_us(100);
+	sendInstraction(0b0011); /* initialization */
+	_delay_ms(1);
+	sendInstraction(0b000010);
+	_delay_ms(2);
+	sendInstraction(0b000010);
+	_delay_ms(1);
+	sendInstraction(0b00101000); /* 5X8 dots format display mode, 2 line, 4-bit bus mode */
+	_delay_ms(1);
+	sendInstraction(0b00001100); /* display ON, cursor OFF */
+	_delay_ms(1);
+	sendInstraction(0b00000001); /*clear display*/
+	_delay_ms(2);
+	sendInstraction(0b00000110);  /* moves to right and DDRAM address is increased by 1 */
+	_delay_ms(1);
+
+}
+
 int main(void)
 {
 	/*ATmega ports init*/
 	portInit();
+	
+	displayInit();
+	
+	sendData('H');
 	
 	
 }
