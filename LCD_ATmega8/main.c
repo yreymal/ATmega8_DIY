@@ -59,7 +59,7 @@ void sendData(char data){
 	ENABLE_HIGHT;  /* rise voltage pulse */
 	_delay_us(50);
 	ENABLE_LOW;    /* data transits with falling voltage pulse */
-
+	RS_DATA;
 	PORTD=data;
 	ENABLE_HIGHT;
 	_delay_us(50);
@@ -73,7 +73,7 @@ void sendInstraction(char command){
 	ENABLE_HIGHT;  /* rise voltage pulse */
 	_delay_us(50);
 	ENABLE_LOW;    /* data transits with falling voltage pulse */
-	
+	RS_INSTRACTION;
 	PORTD=command;
 	ENABLE_HIGHT;
 	_delay_us(50);
@@ -82,16 +82,17 @@ void sendInstraction(char command){
 }
 
 void displayInit(){
+	
 	_delay_ms(15);
-	sendInstraction(0b0011);
+	sendInstraction(0b00110000);
 	_delay_ms(5);
-	sendInstraction(0b0011);
+	sendInstraction(0b00110000);
 	_delay_us(100);
-	sendInstraction(0b0011); /* initialization */
+	sendInstraction(0b00110000); /* initialization */
 	_delay_ms(1);
-	sendInstraction(0b000010);
+	sendInstraction(0b00001000);
 	_delay_ms(2);
-	sendInstraction(0b000010);
+	sendInstraction(0b00000010); //?
 	_delay_ms(1);
 	sendInstraction(0b00101000); /* 5X8 dots format display mode, 2 line, 4-bit bus mode */
 	_delay_ms(1);
@@ -101,7 +102,7 @@ void displayInit(){
 	_delay_ms(2);
 	sendInstraction(0b00000110);  /* moves to right and DDRAM address is increased by 1 */
 	_delay_ms(1);
-
+	
 }
 
 int main(void)
@@ -111,7 +112,13 @@ int main(void)
 	
 	displayInit();
 	
-	sendData('H');
+	sendInstraction(0b01001000);      /* Write to CGRAM with 8 value address */
+	
+	for(int i =0; i<8; ++i){
+		sendData(heart[i]);
+	}
+	sendInstraction(0b10000000|0x45); /* set DDRAM address (0b10000000) and select position with logic add ( | ), pos = middle of a 2 line */
+	sendData(0b1);                      /* display character */
 	
 	
 }
