@@ -1,0 +1,349 @@
+
+LCD_ATmega8.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000018c  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000001e0  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000001e0  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000210  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000040  00000000  00000000  0000024c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000abd  00000000  00000000  0000028c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000005ea  00000000  00000000  00000d49  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000003b3  00000000  00000000  00001333  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000064  00000000  00000000  000016e8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000366  00000000  00000000  0000174c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000040b  00000000  00000000  00001ab2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000030  00000000  00000000  00001ebd  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	12 c0       	rjmp	.+36     	; 0x26 <__ctors_end>
+   2:	24 c0       	rjmp	.+72     	; 0x4c <__bad_interrupt>
+   4:	23 c0       	rjmp	.+70     	; 0x4c <__bad_interrupt>
+   6:	22 c0       	rjmp	.+68     	; 0x4c <__bad_interrupt>
+   8:	21 c0       	rjmp	.+66     	; 0x4c <__bad_interrupt>
+   a:	20 c0       	rjmp	.+64     	; 0x4c <__bad_interrupt>
+   c:	1f c0       	rjmp	.+62     	; 0x4c <__bad_interrupt>
+   e:	1e c0       	rjmp	.+60     	; 0x4c <__bad_interrupt>
+  10:	1d c0       	rjmp	.+58     	; 0x4c <__bad_interrupt>
+  12:	1c c0       	rjmp	.+56     	; 0x4c <__bad_interrupt>
+  14:	1b c0       	rjmp	.+54     	; 0x4c <__bad_interrupt>
+  16:	1a c0       	rjmp	.+52     	; 0x4c <__bad_interrupt>
+  18:	19 c0       	rjmp	.+50     	; 0x4c <__bad_interrupt>
+  1a:	18 c0       	rjmp	.+48     	; 0x4c <__bad_interrupt>
+  1c:	17 c0       	rjmp	.+46     	; 0x4c <__bad_interrupt>
+  1e:	16 c0       	rjmp	.+44     	; 0x4c <__bad_interrupt>
+  20:	15 c0       	rjmp	.+42     	; 0x4c <__bad_interrupt>
+  22:	14 c0       	rjmp	.+40     	; 0x4c <__bad_interrupt>
+  24:	13 c0       	rjmp	.+38     	; 0x4c <__bad_interrupt>
+
+00000026 <__ctors_end>:
+  26:	11 24       	eor	r1, r1
+  28:	1f be       	out	0x3f, r1	; 63
+  2a:	cf e5       	ldi	r28, 0x5F	; 95
+  2c:	d4 e0       	ldi	r29, 0x04	; 4
+  2e:	de bf       	out	0x3e, r29	; 62
+  30:	cd bf       	out	0x3d, r28	; 61
+
+00000032 <__do_copy_data>:
+  32:	10 e0       	ldi	r17, 0x00	; 0
+  34:	a0 e6       	ldi	r26, 0x60	; 96
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	ec e8       	ldi	r30, 0x8C	; 140
+  3a:	f1 e0       	ldi	r31, 0x01	; 1
+  3c:	02 c0       	rjmp	.+4      	; 0x42 <__SREG__+0x3>
+  3e:	05 90       	lpm	r0, Z+
+  40:	0d 92       	st	X+, r0
+  42:	a0 36       	cpi	r26, 0x60	; 96
+  44:	b1 07       	cpc	r27, r17
+  46:	d9 f7       	brne	.-10     	; 0x3e <__SP_H__>
+  48:	98 d0       	rcall	.+304    	; 0x17a <main>
+  4a:	9e c0       	rjmp	.+316    	; 0x188 <_exit>
+
+0000004c <__bad_interrupt>:
+  4c:	d9 cf       	rjmp	.-78     	; 0x0 <__vectors>
+
+0000004e <portInit>:
+};
+
+
+void portInit(){
+	/* pins 1,2 PORTB are for execute commands */
+	DDRB|=(1<<1)|(1<<2);
+  4e:	87 b3       	in	r24, 0x17	; 23
+  50:	86 60       	ori	r24, 0x06	; 6
+  52:	87 bb       	out	0x17, r24	; 23
+	  D4			   ->      PORTD1
+	  D5			   ->      PORTD2
+	  D6			   ->      PORTD3
+	  D7			   ->      PORTD4
+	  */
+	DDRD|=(1<<0)|(1<<1)|(1<<2)|(1<<3);
+  54:	81 b3       	in	r24, 0x11	; 17
+  56:	8f 60       	ori	r24, 0x0F	; 15
+  58:	81 bb       	out	0x11, r24	; 17
+  5a:	08 95       	ret
+
+0000005c <sendData>:
+}
+
+void sendData(char data){
+	PORTD=(data>>4);
+  5c:	98 2f       	mov	r25, r24
+  5e:	92 95       	swap	r25
+  60:	9f 70       	andi	r25, 0x0F	; 15
+  62:	92 bb       	out	0x12, r25	; 18
+	RS_DATA;
+  64:	98 b3       	in	r25, 0x18	; 24
+  66:	92 60       	ori	r25, 0x02	; 2
+  68:	98 bb       	out	0x18, r25	; 24
+	ENABLE_HIGHT;  /* rise voltage pulse */
+  6a:	98 b3       	in	r25, 0x18	; 24
+  6c:	94 60       	ori	r25, 0x04	; 4
+  6e:	98 bb       	out	0x18, r25	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  70:	90 e1       	ldi	r25, 0x10	; 16
+  72:	9a 95       	dec	r25
+  74:	f1 f7       	brne	.-4      	; 0x72 <sendData+0x16>
+  76:	00 c0       	rjmp	.+0      	; 0x78 <sendData+0x1c>
+	_delay_us(50);
+	ENABLE_LOW;    /* data transits with falling voltage pulse */
+  78:	98 b3       	in	r25, 0x18	; 24
+  7a:	9b 7f       	andi	r25, 0xFB	; 251
+  7c:	98 bb       	out	0x18, r25	; 24
+
+	PORTD=data;
+  7e:	82 bb       	out	0x12, r24	; 18
+	ENABLE_HIGHT;
+  80:	88 b3       	in	r24, 0x18	; 24
+  82:	84 60       	ori	r24, 0x04	; 4
+  84:	88 bb       	out	0x18, r24	; 24
+  86:	80 e1       	ldi	r24, 0x10	; 16
+  88:	8a 95       	dec	r24
+  8a:	f1 f7       	brne	.-4      	; 0x88 <sendData+0x2c>
+  8c:	00 c0       	rjmp	.+0      	; 0x8e <sendData+0x32>
+	_delay_us(50);
+	ENABLE_LOW;    /* data transits with falling voltage pulse */
+  8e:	88 b3       	in	r24, 0x18	; 24
+  90:	8b 7f       	andi	r24, 0xFB	; 251
+  92:	88 bb       	out	0x18, r24	; 24
+  94:	90 e1       	ldi	r25, 0x10	; 16
+  96:	9a 95       	dec	r25
+  98:	f1 f7       	brne	.-4      	; 0x96 <sendData+0x3a>
+  9a:	00 c0       	rjmp	.+0      	; 0x9c <sendData+0x40>
+  9c:	08 95       	ret
+
+0000009e <sendInstraction>:
+	_delay_us(50);
+}
+
+void sendInstraction(char command){
+	PORTD=(command>>4);
+  9e:	98 2f       	mov	r25, r24
+  a0:	92 95       	swap	r25
+  a2:	9f 70       	andi	r25, 0x0F	; 15
+  a4:	92 bb       	out	0x12, r25	; 18
+	RS_INSTRACTION;
+  a6:	98 b3       	in	r25, 0x18	; 24
+  a8:	9d 7f       	andi	r25, 0xFD	; 253
+  aa:	98 bb       	out	0x18, r25	; 24
+	ENABLE_HIGHT;  /* rise voltage pulse */
+  ac:	98 b3       	in	r25, 0x18	; 24
+  ae:	94 60       	ori	r25, 0x04	; 4
+  b0:	98 bb       	out	0x18, r25	; 24
+  b2:	90 e1       	ldi	r25, 0x10	; 16
+  b4:	9a 95       	dec	r25
+  b6:	f1 f7       	brne	.-4      	; 0xb4 <sendInstraction+0x16>
+  b8:	00 c0       	rjmp	.+0      	; 0xba <sendInstraction+0x1c>
+	_delay_us(50);
+	ENABLE_LOW;    /* data transits with falling voltage pulse */
+  ba:	98 b3       	in	r25, 0x18	; 24
+  bc:	9b 7f       	andi	r25, 0xFB	; 251
+  be:	98 bb       	out	0x18, r25	; 24
+	
+	PORTD=command;
+  c0:	82 bb       	out	0x12, r24	; 18
+	ENABLE_HIGHT;
+  c2:	88 b3       	in	r24, 0x18	; 24
+  c4:	84 60       	ori	r24, 0x04	; 4
+  c6:	88 bb       	out	0x18, r24	; 24
+  c8:	80 e1       	ldi	r24, 0x10	; 16
+  ca:	8a 95       	dec	r24
+  cc:	f1 f7       	brne	.-4      	; 0xca <sendInstraction+0x2c>
+  ce:	00 c0       	rjmp	.+0      	; 0xd0 <sendInstraction+0x32>
+	_delay_us(50);
+	ENABLE_LOW;    /* data transits with falling voltage pulse */
+  d0:	88 b3       	in	r24, 0x18	; 24
+  d2:	8b 7f       	andi	r24, 0xFB	; 251
+  d4:	88 bb       	out	0x18, r24	; 24
+  d6:	90 e1       	ldi	r25, 0x10	; 16
+  d8:	9a 95       	dec	r25
+  da:	f1 f7       	brne	.-4      	; 0xd8 <sendInstraction+0x3a>
+  dc:	00 c0       	rjmp	.+0      	; 0xde <sendInstraction+0x40>
+  de:	08 95       	ret
+
+000000e0 <displayInit>:
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  e0:	85 ea       	ldi	r24, 0xA5	; 165
+  e2:	9e e0       	ldi	r25, 0x0E	; 14
+  e4:	01 97       	sbiw	r24, 0x01	; 1
+  e6:	f1 f7       	brne	.-4      	; 0xe4 <displayInit+0x4>
+  e8:	00 c0       	rjmp	.+0      	; 0xea <displayInit+0xa>
+  ea:	00 00       	nop
+	_delay_us(50);
+}
+
+void displayInit(){
+	_delay_ms(15);
+	sendInstraction(0b0011);
+  ec:	83 e0       	ldi	r24, 0x03	; 3
+  ee:	d7 df       	rcall	.-82     	; 0x9e <sendInstraction>
+  f0:	81 ee       	ldi	r24, 0xE1	; 225
+  f2:	94 e0       	ldi	r25, 0x04	; 4
+  f4:	01 97       	sbiw	r24, 0x01	; 1
+  f6:	f1 f7       	brne	.-4      	; 0xf4 <displayInit+0x14>
+  f8:	00 c0       	rjmp	.+0      	; 0xfa <displayInit+0x1a>
+  fa:	00 00       	nop
+	_delay_ms(5);
+	sendInstraction(0b0011);
+  fc:	83 e0       	ldi	r24, 0x03	; 3
+  fe:	cf df       	rcall	.-98     	; 0x9e <sendInstraction>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 100:	91 e2       	ldi	r25, 0x21	; 33
+ 102:	9a 95       	dec	r25
+ 104:	f1 f7       	brne	.-4      	; 0x102 <displayInit+0x22>
+ 106:	00 00       	nop
+	_delay_us(100);
+	sendInstraction(0b0011); /* initialization */
+ 108:	83 e0       	ldi	r24, 0x03	; 3
+ 10a:	c9 df       	rcall	.-110    	; 0x9e <sendInstraction>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 10c:	89 ef       	ldi	r24, 0xF9	; 249
+ 10e:	90 e0       	ldi	r25, 0x00	; 0
+ 110:	01 97       	sbiw	r24, 0x01	; 1
+ 112:	f1 f7       	brne	.-4      	; 0x110 <displayInit+0x30>
+ 114:	00 c0       	rjmp	.+0      	; 0x116 <displayInit+0x36>
+ 116:	00 00       	nop
+	_delay_ms(1);
+	sendInstraction(0b000010);
+ 118:	82 e0       	ldi	r24, 0x02	; 2
+ 11a:	c1 df       	rcall	.-126    	; 0x9e <sendInstraction>
+ 11c:	83 ef       	ldi	r24, 0xF3	; 243
+ 11e:	91 e0       	ldi	r25, 0x01	; 1
+ 120:	01 97       	sbiw	r24, 0x01	; 1
+ 122:	f1 f7       	brne	.-4      	; 0x120 <displayInit+0x40>
+ 124:	00 c0       	rjmp	.+0      	; 0x126 <displayInit+0x46>
+ 126:	00 00       	nop
+	_delay_ms(2);
+	sendInstraction(0b000010);
+ 128:	82 e0       	ldi	r24, 0x02	; 2
+ 12a:	b9 df       	rcall	.-142    	; 0x9e <sendInstraction>
+ 12c:	89 ef       	ldi	r24, 0xF9	; 249
+ 12e:	90 e0       	ldi	r25, 0x00	; 0
+ 130:	01 97       	sbiw	r24, 0x01	; 1
+ 132:	f1 f7       	brne	.-4      	; 0x130 <displayInit+0x50>
+ 134:	00 c0       	rjmp	.+0      	; 0x136 <displayInit+0x56>
+ 136:	00 00       	nop
+	_delay_ms(1);
+	sendInstraction(0b00101000); /* 5X8 dots format display mode, 2 line, 4-bit bus mode */
+ 138:	88 e2       	ldi	r24, 0x28	; 40
+ 13a:	b1 df       	rcall	.-158    	; 0x9e <sendInstraction>
+ 13c:	89 ef       	ldi	r24, 0xF9	; 249
+ 13e:	90 e0       	ldi	r25, 0x00	; 0
+ 140:	01 97       	sbiw	r24, 0x01	; 1
+ 142:	f1 f7       	brne	.-4      	; 0x140 <displayInit+0x60>
+ 144:	00 c0       	rjmp	.+0      	; 0x146 <displayInit+0x66>
+ 146:	00 00       	nop
+	_delay_ms(1);
+	sendInstraction(0b00001100); /* display ON, cursor OFF */
+ 148:	8c e0       	ldi	r24, 0x0C	; 12
+ 14a:	a9 df       	rcall	.-174    	; 0x9e <sendInstraction>
+ 14c:	89 ef       	ldi	r24, 0xF9	; 249
+ 14e:	90 e0       	ldi	r25, 0x00	; 0
+ 150:	01 97       	sbiw	r24, 0x01	; 1
+ 152:	f1 f7       	brne	.-4      	; 0x150 <displayInit+0x70>
+ 154:	00 c0       	rjmp	.+0      	; 0x156 <displayInit+0x76>
+ 156:	00 00       	nop
+	_delay_ms(1);
+	sendInstraction(0b00000001); /*clear display*/
+ 158:	81 e0       	ldi	r24, 0x01	; 1
+ 15a:	a1 df       	rcall	.-190    	; 0x9e <sendInstraction>
+ 15c:	83 ef       	ldi	r24, 0xF3	; 243
+ 15e:	91 e0       	ldi	r25, 0x01	; 1
+ 160:	01 97       	sbiw	r24, 0x01	; 1
+ 162:	f1 f7       	brne	.-4      	; 0x160 <displayInit+0x80>
+ 164:	00 c0       	rjmp	.+0      	; 0x166 <displayInit+0x86>
+ 166:	00 00       	nop
+	_delay_ms(2);
+	sendInstraction(0b00000110);  /* moves to right and DDRAM address is increased by 1 */
+ 168:	86 e0       	ldi	r24, 0x06	; 6
+ 16a:	99 df       	rcall	.-206    	; 0x9e <sendInstraction>
+ 16c:	89 ef       	ldi	r24, 0xF9	; 249
+ 16e:	90 e0       	ldi	r25, 0x00	; 0
+ 170:	01 97       	sbiw	r24, 0x01	; 1
+ 172:	f1 f7       	brne	.-4      	; 0x170 <displayInit+0x90>
+ 174:	00 c0       	rjmp	.+0      	; 0x176 <displayInit+0x96>
+ 176:	00 00       	nop
+ 178:	08 95       	ret
+
+0000017a <main>:
+}
+
+int main(void)
+{
+	/*ATmega ports init*/
+	portInit();
+ 17a:	69 df       	rcall	.-302    	; 0x4e <portInit>
+	
+	displayInit();
+ 17c:	b1 df       	rcall	.-158    	; 0xe0 <displayInit>
+	
+	sendData('H');
+ 17e:	88 e4       	ldi	r24, 0x48	; 72
+ 180:	6d df       	rcall	.-294    	; 0x5c <sendData>
+	
+	
+}
+ 182:	80 e0       	ldi	r24, 0x00	; 0
+ 184:	90 e0       	ldi	r25, 0x00	; 0
+ 186:	08 95       	ret
+
+00000188 <_exit>:
+ 188:	f8 94       	cli
+
+0000018a <__stop_program>:
+ 18a:	ff cf       	rjmp	.-2      	; 0x18a <__stop_program>
