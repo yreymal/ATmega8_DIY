@@ -16,6 +16,8 @@
 #define	ENABLE_HIGHT	PORTB|=(1<<2)	/* set 1 or 0 to E pin */
 #define ENABLE_LOW		PORTB&=~(1<<2)
 
+
+/* custom character bytes */ 
 char customChar[8] = {
 	0b00100,
 	0b00100,
@@ -36,13 +38,15 @@ char heart[8] = {
 	0b01110,
 	0b00100
 };
-
+char human[] = {0x0E, 0x0E, 0x04, 0x0E, 0x15, 0x04, 0x0A, 0x0A};
+char csmile[] = {0x00, 0x00, 0x0A, 0x00, 0x11, 0x0E, 0x00, 0x00};  
+char emptyHeart[] = {0x00, 0x00, 0x0A, 0x15, 0x11, 0x0E, 0x04, 0x00}; 
 
 void portInit(){
 	/* pins 1,2 PORTB are for execute commands */
 	DDRB|=(1<<1)|(1<<2);
 	
-	/* pins 1-4 PORTD for byte sending */
+	/* pins 0-3 PORTD for byte sending */
 	/*
 	screen PIN number		ATmega PIN number
 	  D4			   ->      PORTD1
@@ -59,7 +63,6 @@ void sendData(char data){
 	ENABLE_HIGHT;  /* rise voltage pulse */
 	_delay_us(50);
 	ENABLE_LOW;    /* data transits with falling voltage pulse */
-	RS_DATA;
 	PORTD=data;
 	ENABLE_HIGHT;
 	_delay_us(50);
@@ -73,7 +76,6 @@ void sendInstraction(char command){
 	ENABLE_HIGHT;  /* rise voltage pulse */
 	_delay_us(50);
 	ENABLE_LOW;    /* data transits with falling voltage pulse */
-	RS_INSTRACTION;
 	PORTD=command;
 	ENABLE_HIGHT;
 	_delay_us(50);
@@ -92,13 +94,13 @@ void displayInit(){
 	_delay_ms(1);
 	sendInstraction(0b00001000);
 	_delay_ms(2);
-	sendInstraction(0b00000010); //?
+	sendInstraction(0b00000010); /* return home */
 	_delay_ms(1);
 	sendInstraction(0b00101000); /* 5X8 dots format display mode, 2 line, 4-bit bus mode */
 	_delay_ms(1);
 	sendInstraction(0b00001100); /* display ON, cursor OFF */
 	_delay_ms(1);
-	sendInstraction(0b00000001); /*clear display*/
+	sendInstraction(0b00000001); /* clear display */
 	_delay_ms(2);
 	sendInstraction(0b00000110);  /* moves to right and DDRAM address is increased by 1 */
 	_delay_ms(1);
@@ -112,12 +114,12 @@ int main(void)
 	
 	displayInit();
 	
-	sendInstraction(0b01001000);      /* Write to CGRAM with 8 value address */
+	sendInstraction(0b01001000);       /* Write to CGRAM with 8 value address */
 	
-	for(int i =0; i<8; ++i){
-		sendData(heart[i]);
+	for(int i =0; i<7; ++i){
+		sendData(emptyHeart[i]);
 	}
-	sendInstraction(0b10000000|0x45); /* set DDRAM address (0b10000000) and select position with logic add ( | ), pos = middle of a 2 line */
+	sendInstraction(0b10000000|0x45);   /* set DDRAM address (0b10000000) and select position with logic add ( | ), pos = middle of a 2 line */
 	sendData(0b1);                      /* display character */
 	
 	
