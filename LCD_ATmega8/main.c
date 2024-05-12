@@ -112,15 +112,16 @@ void displayInit(){
 }
 
 char wait_us(unsigned char amountOfUs){			/* A 0 timer for us with overflow interrupt */
-	if(amountOfUs<=0xFF){					    /* jle 1 byte */
-		config_Timer_0();
-		sreg = SREG;						/* save global interrupt Flag, SREG - HW register */
-		cli();								/* disable interrupts */
-		TCNT0 = (0xFF-amountOfUs);				/* timer will start to calc not from 0, but from the diff, so it will be the put time to overflow */
+	unsigned char sreg;
+		if(amountOfUs<=0xFF){					    /* jle 1 byte */
+			config_Timer_0();
+			sreg = SREG;						/* save global interrupt Flag, SREG - HW register */
+			cli();								/* disable interrupts */
+			TCNT0 = (0xFF-amountOfUs);				/* timer will start to calc not from 0, but from the diff, so it will be the put time to overflow */
 		
-		SREG = sreg;						/* restore global interrupt flag */
+			SREG = sreg;						/* restore global interrupt flag */
 		
-		return 0;
+			return 0;
 	}
 	return 1;
 }
@@ -128,6 +129,7 @@ char wait_us(unsigned char amountOfUs){			/* A 0 timer for us with overflow inte
 char wait_ms(unsigned int amountOfMs){			/* A 1 timer for ms with compare interrupt */
 	unsigned char sreg;
 		if(amountOfMs<=0xFFFF){					/* jle 16 bit */
+			config_Timer_1();
 			sreg = SREG;						/* save global interrupt Flag, SREG - HW register */
 			
 			cli();								/* disable interrupts */
@@ -138,6 +140,7 @@ char wait_ms(unsigned int amountOfMs){			/* A 1 timer for ms with compare interr
 			
 			return 0;
 		}
+		return 1;
 }
 
 
@@ -145,12 +148,13 @@ ISR(TIMER0_OVF_vect){
 
 	
 	
-	
+	TCCR0&=~(1<<CS00);  /* turn off 0 Timer */
 }
 
 
 ISR(TIMER1_COMPA_vect){
-	
+	TCNT1=0;             /*set to 0  1st timer register */
+	TCCR1B&=~(1<<CS11);  /*turn off 1st Timer */
 }
 
 
