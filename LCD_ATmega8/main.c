@@ -45,6 +45,8 @@ char csmile[] = {0x00, 0x00, 0x0A, 0x00, 0x11, 0x0E, 0x00, 0x00};
 char emptyHeart[] = {0x00, 0x00, 0x0A, 0x15, 0x11, 0x0E, 0x04, 0x00}; 
 
 void config_Timer_0(void );
+void config_Timer_1(void );
+char wait_ms(unsigned int amountOfMs);
 
 void portInit(){
 	/* pins 1,2 PORTB are for execute commands */
@@ -155,6 +157,7 @@ ISR(TIMER0_OVF_vect){
 ISR(TIMER1_COMPA_vect){
 	TCNT1=0;             /*set to 0  1st timer register */
 	TCCR1B&=~(1<<CS11);  /*turn off 1st Timer */
+	sei();
 }
 
 
@@ -163,6 +166,7 @@ ISR(TIMER1_COMPA_vect){
 void config_Timer_0(void ){
 	TCCR0=(1<<CS00);			/* No prescaling */
 	TIMSK |= (1<<TOIE0);		/* enable overflow interrupt */
+	sei();
 	
 }
 
