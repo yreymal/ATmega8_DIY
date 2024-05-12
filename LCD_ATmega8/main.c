@@ -18,6 +18,7 @@
 #define ENABLE_LOW		PORTB&=~(1<<2)
 #define X50_SCHEDULER_CONST (0xFF - 32) /* 255 -50 in DEC, for TCTN0)
 
+
 /* custom character bytes */ 
 char customChar[8] = {
 	0b00100,
@@ -42,6 +43,8 @@ char heart[8] = {
 char human[] = {0x0E, 0x0E, 0x04, 0x0E, 0x15, 0x04, 0x0A, 0x0A};
 char csmile[] = {0x00, 0x00, 0x0A, 0x00, 0x11, 0x0E, 0x00, 0x00};  
 char emptyHeart[] = {0x00, 0x00, 0x0A, 0x15, 0x11, 0x0E, 0x04, 0x00}; 
+
+void config_Timer_0(void );
 
 void portInit(){
 	/* pins 1,2 PORTB are for execute commands */
@@ -109,9 +112,13 @@ void displayInit(){
 }
 
 char wait_us(unsigned char amountOfUs){			/* A 0 timer for us with overflow interrupt */
-	if(amountOfUs<=0xFF){				/* jle 1 byte */
-		TCNT0 = (0xFF-amountOfUs);		/* timer will start to calc not from 0, but from the diff, so it will be the put time to overflow */
+	if(amountOfUs<=0xFF){					    /* jle 1 byte */
+		config_Timer_0();
+		sreg = SREG;						/* save global interrupt Flag, SREG - HW register */
+		cli();								/* disable interrupts */
+		TCNT0 = (0xFF-amountOfUs);				/* timer will start to calc not from 0, but from the diff, so it will be the put time to overflow */
 		
+		SREG = sreg;						/* restore global interrupt flag */
 		
 		return 0;
 	}
@@ -119,9 +126,15 @@ char wait_us(unsigned char amountOfUs){			/* A 0 timer for us with overflow inte
 }
 
 char wait_ms(unsigned int amountOfMs){			/* A 1 timer for ms with compare interrupt */
-		if(amountOfMs<=0xFFFF){			/* jle 16 bit */
+	unsigned char sreg;
+		if(amountOfMs<=0xFFFF){					/* jle 16 bit */
+			sreg = SREG;						/* save global interrupt Flag, SREG - HW register */
 			
-			
+			cli();								/* disable interrupts */
+			OCR1AH = (amountOfMs>>8);			/* put 16 bit var into two 8 bit registers */
+			OCR1AL = (amountOfMs<<8);
+ 			//sei();							/* enable interrupts */
+			SREG = sreg;						/* restore global interrupt flag */
 			
 			return 0;
 		}
@@ -136,13 +149,22 @@ ISR(TIMER0_OVF_vect){
 }
 
 
+ISR(TIMER1_COMPA_vect){
+	
+}
 
 
 
 
+void config_Timer_0(void ){
+	TCCR0=(1<<CS00);			/* No prescaling */
+	TIMSK |= (1<<TOIE0);		/* enable overflow interrupt */
+	
+}
 
-void config_0timer(void ){
-	TCCR0=(1<<CS00);	/* No prescaling*/
+void config_Timer_1(void ){
+	TCCR1B=(1<<CS11);			/* clk/8 prescaling */
+	TIMSK |= (1<<OCIE1A);		/* enable compare interrupt */
 	
 }
 
