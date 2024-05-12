@@ -9,13 +9,14 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/interrupt.h>
 
 #define RS_DATA			PORTB|=(1<<1)  /*select DATA register*/
 #define RS_INSTRACTION	PORTB&=~(1<<1) /*select INSTRACTION register*/
 
 #define	ENABLE_HIGHT	PORTB|=(1<<2)	/* set 1 or 0 to E pin */
 #define ENABLE_LOW		PORTB&=~(1<<2)
-
+#define X50_SCHEDULER_CONST (0xFF - 32) /* 255 -50 in DEC, for TCTN0)
 
 /* custom character bytes */ 
 char customChar[8] = {
@@ -85,27 +86,72 @@ void sendInstraction(char command){
 
 void displayInit(){
 	
-	_delay_ms(15);
+	_delay_ms(100);
 	sendInstraction(0b00110000);
-	_delay_ms(5);
+	_delay_ms(100);
 	sendInstraction(0b00110000);
 	_delay_us(100);
 	sendInstraction(0b00110000); /* initialization */
-	_delay_ms(1);
+	_delay_ms(100);
 	sendInstraction(0b00001000);
-	_delay_ms(2);
+	_delay_ms(100);
 	sendInstraction(0b00000010); /* return home */
-	_delay_ms(1);
+	_delay_ms(100);
 	sendInstraction(0b00101000); /* 5X8 dots format display mode, 2 line, 4-bit bus mode */
-	_delay_ms(1);
+	_delay_ms(100);
 	sendInstraction(0b00001100); /* display ON, cursor OFF */
-	_delay_ms(1);
+	_delay_ms(100);
 	sendInstraction(0b00000001); /* clear display */
-	_delay_ms(2);
+	_delay_ms(100);
 	sendInstraction(0b00000110);  /* moves to right and DDRAM address is increased by 1 */
-	_delay_ms(1);
+	_delay_ms(100);
 	
 }
+
+char wait_us(unsigned char amountOfUs){			/* A 0 timer for us with overflow interrupt */
+	if(amountOfUs<=0xFF){				/* jle 1 byte */
+		TCNT0 = (0xFF-amountOfUs);		/* timer will start to calc not from 0, but from the diff, so it will be the put time to overflow */
+		
+		
+		return 0;
+	}
+	return 1;
+}
+
+char wait_ms(unsigned int amountOfMs){			/* A 1 timer for ms with compare interrupt */
+		if(amountOfMs<=0xFFFF){			/* jle 16 bit */
+			
+			
+			
+			return 0;
+		}
+}
+
+
+ISR(TIMER0_OVF_vect){
+
+	
+	
+	
+}
+
+
+
+
+
+
+
+void config_0timer(void ){
+	TCCR0=(1<<CS00);	/* No prescaling*/
+	
+}
+
+
+
+
+
+
+
 
 int main(void)
 {
@@ -123,5 +169,7 @@ int main(void)
 	sendData(0b1);                      /* display character */
 	
 	
+
+	sei();  /* set global interrupt enable */
 }
 
